@@ -1,21 +1,22 @@
 {
-  "name": "matrix-bot-sdk-bot-template",
+  "name": "matrix-trivia-bot",
   "version": "0.1.0",
-  "author": "TravisR",
+  "author": "t2bot.io",
   "license": "Apache-2.0",
-  "description": "A template repository for bots made with the matrix-bot-sdk",
+  "description": "A trivia bot for Matrix",
+  "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/turt2live/matrix-bot-sdk-bot-template.git"
+    "url": "git+https://github.com/t2bot/trivia-bot.git"
   },
   "bugs": {
-    "url": "https://github.com/turt2live/matrix-bot-sdk-bot-template/issues"
+    "url": "https://github.com/t2bot/trivia-bot/issues"
   },
-  "homepage": "https://github.com/turt2live/matrix-bot-sdk-bot-template#readme",
+  "homepage": "https://github.com/t2bot/trivia-bot#readme",
   "keywords": [
     "matrix",
     "bot",
-    "template"
+    "trivia"
   ],
   "main": "lib/index.js",
   "scripts": {
