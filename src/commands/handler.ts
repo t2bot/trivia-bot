@@ -1,28 +1,20 @@
-import { LogService, MatrixClient, MessageEvent, RichReply, UserID } from "matrix-bot-sdk";
-import { runHelloCommand } from "./hello";
-import * as htmlEscape from "escape-html";
+import { LogService, MatrixClient, MessageEvent, UserID } from "matrix-bot-sdk";
+import { runCategoriesCommand } from "./categories";
+import { TriviaManager } from "../TriviaManager";
+import { runStartCommand } from "./start";
 
-// The prefix required to trigger the bot. The bot will also respond
-// to being pinged directly.
-export const COMMAND_PREFIX = "!bot";
+export const COMMAND_PREFIX = "!trivia";
 
-// This is where all of our commands will be handled
 export default class CommandHandler {
-
-    // Just some variables so we can cache the bot's display name and ID
-    // for command matching later.
     private displayName: string;
     private userId: string;
     private localpart: string;
 
-    constructor(private client: MatrixClient) {
+    constructor(private client: MatrixClient, private trivia: TriviaManager) {
     }
 
     public async start() {
-        // Populate the variables above (async)
         await this.prepareProfile();
-
-        // Set up the event handler
         this.client.on("room.message", this.onMessage.bind(this));
     }
 
@@ -34,7 +26,6 @@ export default class CommandHandler {
             const profile = await this.client.getUserProfile(this.userId);
             if (profile && profile['displayname']) this.displayName = profile['displayname'];
         } catch (e) {
-            // Non-fatal error - we'll just log it and move on.
             LogService.warn("CommandHandler", e);
         }
     }
@@ -51,23 +42,18 @@ export default class CommandHandler {
         const prefixUsed = prefixes.find(p => event.textBody.startsWith(p));
         if (!prefixUsed) return; // Not a command (as far as we're concerned)
 
-        // Check to see what the arguments were to the command
         const args = event.textBody.substring(prefixUsed.length).trim().split(' ');
-
-        // Try and figure out what command the user ran, defaulting to help
         try {
-            if (args[0] === "hello") {
-                return runHelloCommand(roomId, event, args, this.client);
+            if (args[0] === "categories") {
+                return runCategoriesCommand(roomId, event, args, this.client, this.trivia);
+            } else if (args[0] === "easy" || args[0] === "medium" || args[0] === "hard") {
+                return runStartCommand(roomId, event, args, this.client, this.trivia);
             } else {
-                const help = "" +
-                    "!bot hello [user]     - Say hello to a user.\n" +
-                    "!bot help             - This menu\n";
+                const help = "<strong>Help:</strong><br /><br />" +
+                    "List the available categories: <code>!trivia categories</code><br />" +
+                    "Start a new trivia game: <code>!trivia &lt;easy|medium|hard&gt; &lt;num_questions&gt; &lt;...categories&gt; </code>";
 
-                const text = `Help menu:\n${help}`;
-                const html = `<b>Help menu:</b><br /><pre><code>${htmlEscape(help)}</code></pre>`;
-                const reply = RichReply.createFor(roomId, ev, text, html); // Note that we're using the raw event, not the parsed one!
-                reply["msgtype"] = "m.notice"; // Bots should always use notices
-                return this.client.sendMessage(roomId, reply);
+                return this.client.replyHtmlNotice(roomId, ev, help);
             }
         } catch (e) {
             // Log the error
