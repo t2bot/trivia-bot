@@ -13,6 +13,7 @@ WORKDIR /bot
 
 COPY --from=builder /src/lib /bot/lib
 COPY --from=builder /src/package*.json /bot
+COPY --from=builder /src/yarn.lock /bot/yarn.lock
 COPY --from=builder /src/config /bot/config
 
 RUN yarn install
