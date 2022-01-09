@@ -6,12 +6,8 @@ A trivia bot for Matrix, using questions from [Open Trivia Database](https://ope
 
 ## Using the bot
 
-TODO: Host on t2bot.io
-
-<!--
 The bot is hosted at [@trivia:t2bot.io](https://matrix.to/#/@trivia:t2bot.io) with more information
 on the [t2bot.io website](https://t2bot.io/triviabot).
--->
 
 ## Running / Building
 
