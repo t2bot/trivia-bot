@@ -5,7 +5,8 @@ import {
     MatrixClient,
     RichConsoleLogger,
     RustSdkCryptoStorageProvider,
-    SimpleFsStorageProvider
+    SimpleFsStorageProvider,
+    SimpleRetryJoinStrategy,
 } from "matrix-bot-sdk";
 import * as path from "path";
 import config from "./config";
@@ -23,6 +24,7 @@ LogService.info("index", "Bot starting...");
 
     const client = new MatrixClient(config.homeserverUrl, config.accessToken, storage, cryptoStore);
     AutojoinRoomsMixin.setupOnClient(client);
+    client.setJoinStrategy(new SimpleRetryJoinStrategy());
 
     const trivia = new TriviaManager(client);
     const commands = new CommandHandler(client, trivia);
