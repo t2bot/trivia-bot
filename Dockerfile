@@ -3,8 +3,8 @@ FROM node:14 AS builder
 WORKDIR /src
 COPY . /src
 
-RUN npm ci
-RUN npm run build
+RUN yarn install
+RUN yarn build
 
 FROM node:14
 
@@ -15,7 +15,7 @@ COPY --from=builder /src/lib /bot/lib
 COPY --from=builder /src/package*.json /bot
 COPY --from=builder /src/config /bot/config
 
-RUN npm ci
+RUN yarn install
 
 VOLUME /bot/config
 
